@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
 
 namespace IgnisClaves
 {
-    internal class HitSound
+    public class HitSound
     {
-        internal SoundEffect Sound;
+        private readonly SoundEffect sound;
 
         public static HitSound Clap;
         public static HitSound Kick;
@@ -18,17 +19,20 @@ namespace IgnisClaves
 
         static HitSound()
         {
-            // TODO clap = ...
+            Clap = new HitSound(AppController.Ignis.Content.Load<SoundEffect>("clap"));
+            Kick = new HitSound(AppController.Ignis.Content.Load<SoundEffect>("kick"));
+            Snare = new HitSound(AppController.Ignis.Content.Load<SoundEffect>("snare"));
+            HiHat = new HitSound(AppController.Ignis.Content.Load<SoundEffect>("hihat"));
         }
 
         public HitSound(SoundEffect sound)
         {
-            Sound = sound;
+            this.sound = sound;
         }
 
         internal void Play()
         {
-            //TODO
+            sound.Play();
         }
     }
 }
