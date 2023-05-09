@@ -4,10 +4,13 @@ namespace IgnisClaves
 {
     class AppController
     {
+        public static IgnisGame Ignis = new();
+
         public static void Main()
         {
-            using var game = new IgnisGame();
-            game.Run();
+            Ignis.Run();
         }
+
+
     }
 }

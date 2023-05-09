@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace IgnisClaves
 {
-    internal class Note
+    public class Note
     {
+        public HitSound HitSound;
 
+        public int[] Position;
     }
 }
