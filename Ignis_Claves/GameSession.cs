@@ -34,12 +34,12 @@ namespace IgnisClaves
 
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void Draw()
         {
             throw new NotImplementedException();
         }
 
-        public override void Update(IgnisGame ignisGame)
+        public override void Update()
         {
             throw new NotImplementedException();
         }

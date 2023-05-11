@@ -12,10 +12,10 @@ namespace IgnisClaves
     {
         private readonly SoundEffect sound;
 
-        public static HitSound Clap;
-        public static HitSound Kick;
-        public static HitSound Snare;
-        public static HitSound HiHat;
+        public static readonly HitSound Clap;
+        public static readonly HitSound Kick;
+        public static readonly HitSound Snare;
+        public static readonly HitSound HiHat;
 
         static HitSound()
         {

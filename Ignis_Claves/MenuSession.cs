@@ -13,6 +13,7 @@ namespace IgnisClaves
     public class MenuSession : Session
     {
         /*                  Поля и свойства                 */
+        //public override IgnisGame CurrentIgnisGame { get; set; }
         public List<BeatMap> BeatMapsList;
 
         private int? selectedBeatMap;
@@ -36,13 +37,19 @@ namespace IgnisClaves
         }
 
         public Texture2D BackgroundTexture;
+
+        public string Username;
+        
         /*                  __Поля и свойства__                 */
 
 
 
         /*                  Конструкторы                    */
-        public MenuSession(List<BeatMap> beatMapsList)
+        public MenuSession(IgnisGame ignisGame, SpriteBatch spriteBatch, List<BeatMap> beatMapsList)
         {
+            SessionIgnisGame = ignisGame;
+            SessionSpriteBatch = spriteBatch;
+
             BeatMapsList = beatMapsList;
 
             if (BeatMapsList.Any())
@@ -55,8 +62,10 @@ namespace IgnisClaves
             }
         }
 
-        public MenuSession()
+        public MenuSession(IgnisGame ignisGame, SpriteBatch spriteBatch)
         {
+            SessionIgnisGame = ignisGame;
+            SessionSpriteBatch = spriteBatch;
             BeatMapsList = new List<BeatMap>();
             SelectedBeatMap = null;
         }
@@ -70,38 +79,53 @@ namespace IgnisClaves
             // TODO Загрузить карты
             // TODO Пройтись по всем битмапам и подгрузить всё, что им нужно
 
-            BackgroundTexture = IgnisRender.LoadTexture2D("default\\ralsei_3");
+            BackgroundTexture = SessionIgnisGame.Content.Load<Texture2D>("default\\ralsei_3");
+
+            Username = IgnisRender.GetUsername();
         }
 
-        public override void Update(IgnisGame ignisGame)
+        public override void Update()
         {
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
-                ignisGame.Exit();
+                SessionIgnisGame.Exit();
 
-            MenuSession session = (MenuSession) ignisGame.CurrentSession;
+            MenuSession session = (MenuSession)SessionIgnisGame.CurrentSession;
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Enter)) // TODO надо проверять нажатие и отпускание (сейчас он возвращает true потому что кнопка не нажата :) )
+            if (SessionIgnisGame.IsKeyReleased(Keys.Enter))
             {
-                ignisGame.CurrentSession = new GameSession(session.GetSelectedBeatMap());
-                ignisGame.CurrentSession.Start();
+                SessionIgnisGame.CurrentSession = new GameSession(session.GetSelectedBeatMap());
+                SessionIgnisGame.CurrentSession.Start();
+
                 // TODO наверное, нужно что-то вручную почистить или написать Dispose()
             }
-            else if (Keyboard.GetState().IsKeyDown(Keys.Up))
+            else if (SessionIgnisGame.IsKeyReleased(Keys.Up))
             {
                 session.SelectPreviousIndex();
             }
-            else if (Keyboard.GetState().IsKeyDown(Keys.Down))
+            else if (SessionIgnisGame.IsKeyReleased(Keys.Down))
             {
                 session.SelectNextIndex();
             }
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void Draw()
         {
-            spriteBatch.Begin();
-            IgnisRender.DrawBackground(BackgroundTexture, spriteBatch, IgnisRender.ScalingMode.Stretch);
+            IgnisRender.DrawBackground(BackgroundTexture, SessionSpriteBatch, IgnisRender.ScalingMode.Stretch);
 
-            spriteBatch.End();
+            IgnisRender.DrawRectangle(SessionSpriteBatch, 
+                new Color(214, 214, 214), 
+                IgnisRender.GetAbsolutePosition(0.05f, 0.05f, SessionSpriteBatch),
+                IgnisRender.GetAbsoluteMeasureString(SessionSpriteBatch, IgnisRender.DefaultFont, Username, 0.05f));
+
+            IgnisRender.DrawText(SessionSpriteBatch,
+                Username,
+                //IgnisRender.GetAbsoluteFontScale(SessionSpriteBatch, IgnisRender.DefaultFont, 0.5f).ToString(),
+                IgnisRender.GetAbsolutePosition(0.05f, 0.05f, SessionSpriteBatch), 
+                Color.Gray, 
+                IgnisRender.GetAbsoluteFontScale(SessionSpriteBatch, IgnisRender.DefaultFont, 0.05f), 
+                0.5f);
+
+            //IgnisRender.DrawText(SessionSpriteBatch, Username, IgnisRender.GetAbsolutePosition(0.05f, 0.05f, SessionSpriteBatch), Color.Gray, );
         }
         /*                  __Логика__                  */
 

@@ -9,9 +9,10 @@ namespace IgnisClaves
 {
     public abstract class Session
     {
+        public IgnisGame SessionIgnisGame;
+        public SpriteBatch SessionSpriteBatch;
         public abstract void Start();
-
-        public abstract void Draw(SpriteBatch spriteBatch);
-        public abstract void Update(IgnisGame ignisGame);
+        public abstract void Draw();
+        public abstract void Update();
     }
 }
