@@ -19,10 +19,10 @@ namespace IgnisClaves
 
         static HitSound()
         {
-            Clap = new HitSound(AppController.Ignis.Content.Load<SoundEffect>("clap"));
-            Kick = new HitSound(AppController.Ignis.Content.Load<SoundEffect>("kick"));
-            Snare = new HitSound(AppController.Ignis.Content.Load<SoundEffect>("snare"));
-            HiHat = new HitSound(AppController.Ignis.Content.Load<SoundEffect>("hihat"));
+            Clap = new HitSound(AppController.Ignis.Content.Load<SoundEffect>("default\\clap"));
+            Kick = new HitSound(AppController.Ignis.Content.Load<SoundEffect>("default\\kick"));
+            Snare = new HitSound(AppController.Ignis.Content.Load<SoundEffect>("default\\snare"));
+            HiHat = new HitSound(AppController.Ignis.Content.Load<SoundEffect>("default\\hihat"));
         }
 
         public HitSound(SoundEffect sound)

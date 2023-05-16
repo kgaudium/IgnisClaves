@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
@@ -13,9 +14,21 @@ namespace IgnisClaves
     public static class IgnisRender
     {
         public static SpriteFont DefaultFont;
+        public static Texture2D DefaultBackground;
         public static Texture2D BlankTexture;
 
-        
+        public static Color DarkerGrayColor = new Color(90, 90, 90);
+        public static Color DarkGrayColor = new Color(150, 150, 150);
+        public static Color GrayColor = new Color(214, 214, 214);
+        public static Color LightBlackColor = new Color(36, 36, 36);
+
+        public static Color DarkGreenColor = new Color(41, 171, 130);
+        public static Color GreenColor = new Color(52, 219, 127);
+
+        public static Color DarkBrownColor = new Color(61, 51, 51);
+
+        public static Color PinkColor = new Color(232, 99, 182);
+        public static Color DarkPinkColor = new Color(84, 36, 66);
 
         public enum ScalingMode
         {
@@ -26,6 +39,7 @@ namespace IgnisClaves
         public static void Initialize(IgnisGame ignisGame)
         {
             DefaultFont = ignisGame.Content.Load<SpriteFont>("default\\spaceage");
+            DefaultBackground = ignisGame.Content.Load<Texture2D>("default\\ralsei_3");
 
             BlankTexture = new Texture2D(ignisGame.GraphicsDevice, 1, 1);
             BlankTexture.SetData(new Color[] { Color.White });
@@ -81,9 +95,24 @@ namespace IgnisClaves
             spriteBatch.Draw(BlankTexture, new Rectangle((int)position.X, (int)position.Y, (int)size.X, (int)size.Y), null, color, 0f, origin, SpriteEffects.None, 0.5f);
         }
 
+        public static void DrawRectangle(SpriteBatch spriteBatch, Color color, Vector2 position, Vector2 size, Vector2 origin, float layerDepth)
+        {
+            spriteBatch.Draw(BlankTexture, new Rectangle((int)position.X, (int)position.Y, (int)size.X, (int)size.Y), null, color, 0f, origin, SpriteEffects.None, layerDepth);
+        }
+
         public static void DrawRectangleByRelative(SpriteBatch spriteBatch, Color color, Vector2 position, Vector2 size)
         {
             DrawRectangle(spriteBatch, color, GetAbsolutePosition(position.X, position.Y, spriteBatch), GetAbsolutePosition(size.X, size.Y, spriteBatch));
+        }
+
+        public static void DrawRectangleByRelative(SpriteBatch spriteBatch, Color color, Vector2 position, Vector2 size, Vector2 origin)
+        {
+            DrawRectangle(spriteBatch, color, GetAbsolutePosition(position.X, position.Y, spriteBatch), GetAbsolutePosition(size.X, size.Y, spriteBatch), origin);
+        }
+
+        public static void DrawRectangleByRelative(SpriteBatch spriteBatch, Color color, Vector2 position, Vector2 size, Vector2 origin, float layerDepth)
+        {
+            DrawRectangle(spriteBatch, color, GetAbsolutePosition(position.X, position.Y, spriteBatch), GetAbsolutePosition(size.X, size.Y, spriteBatch), origin, layerDepth);
         }
 
         public static void DrawText(SpriteBatch spriteBatch, SpriteFont font, string text, Vector2 position, Color color, float scale, float layerDepth)
@@ -106,10 +135,6 @@ namespace IgnisClaves
             spriteBatch.DrawString(DefaultFont, text, centerPosition, color, 0f, DefaultFont.MeasureString(text) / 2f, scale, SpriteEffects.None, layerDepth);
         }
 
-        public static string GetUsername()
-        {
-            return RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? WindowsIdentity.GetCurrent().Name : "default";
-        }
 
         public static float GetAbsoluteX(float percentX, SpriteBatch spriteBatch)
         {
@@ -121,11 +146,25 @@ namespace IgnisClaves
             return spriteBatch.GraphicsDevice.Viewport.Height * percentY;
         }
 
+        /// <summary>
+        /// Возвращает позицию из процентов от экрана
+        /// </summary>
+        /// <param name="percentX"></param>
+        /// <param name="percentY"></param>
+        /// <param name="spriteBatch"></param>
+        /// <returns></returns>
         public static Vector2 GetAbsolutePosition(float percentX, float percentY, SpriteBatch spriteBatch)
         {
             return new Vector2(spriteBatch.GraphicsDevice.Viewport.Width * percentX, spriteBatch.GraphicsDevice.Viewport.Height * percentY);
         }
 
+        /// <summary>
+        /// Возвращает размер шрифта, при котором он будет занимать заданное количество процентов от высоты экрана.
+        /// </summary>
+        /// <param name="spriteBatch">SpriteBatch с помощью которого будет отрисовываться</param>
+        /// <param name="font">Шрифт</param>
+        /// <param name="relativeScale">Нужный процент от экрана</param>
+        /// <returns></returns>
         public static float GetAbsoluteFontScale(SpriteBatch spriteBatch, SpriteFont font, float relativeScale)
         {
             float height = font.MeasureString("A").Y;
@@ -133,9 +172,46 @@ namespace IgnisClaves
             return (spriteBatch.GraphicsDevice.Viewport.Height / height) * relativeScale;
         }
 
+        /// <summary>
+        /// Возврщает размеры, занимаемые заданной строкой в заданном масштабе
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        /// <param name="font"></param>
+        /// <param name="text"></param>
+        /// <param name="relativeScale">Размер шрифта в процентах от экрана</param>
+        /// <returns></returns>
         public static Vector2 GetAbsoluteMeasureString(SpriteBatch spriteBatch, SpriteFont font, string text, float relativeScale)
         {
             return font.MeasureString(text) * GetAbsoluteFontScale(spriteBatch, font, relativeScale);
+        }
+
+        public static string CutStringToFitWidth(string text, SpriteFont font, float relativeFontScale, float width, SpriteBatch spriteBatch)
+        {
+            if (GetAbsoluteMeasureString(spriteBatch, font, text, relativeFontScale).X <= width)
+            {
+                return text;
+            }
+
+            int length = text.Length;
+            while (true)
+            {
+                float textWidth = GetAbsoluteMeasureString(spriteBatch, font, text.Substring(0, --length)+"...",  relativeFontScale).X;
+
+                if (textWidth <= width)
+                {
+                    return text.Substring(0, length)+"...";
+                }
+
+                if (length <= 0)
+                {
+                    return "";
+                }
+            }
+        }
+
+        public static string CutStringToFitWidth(string text, float relativeFontScale, float width, SpriteBatch spriteBatch)
+        {
+            return CutStringToFitWidth(text, DefaultFont, relativeFontScale, width, spriteBatch);
         }
 
         //public static Point Vector2ToPoint(Vector2 vector2)

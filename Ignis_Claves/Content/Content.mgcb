@@ -55,6 +55,20 @@
 /processorParam:Quality=Best
 /build:default/kick.wav
 
+#begin default/noto_bold.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=NoChange
+/build:default/noto_bold.spritefont
+
+#begin default/noto.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=NoChange
+/build:default/noto.spritefont
+
 #begin default/ralsei_1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -101,6 +115,6 @@
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
+/processorParam:TextureFormat=NoChange
 /build:default/spaceage.spritefont
 

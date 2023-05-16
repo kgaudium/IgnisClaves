@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.Security.Principal;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -19,13 +22,19 @@ namespace IgnisClaves
         public KeyboardState CurrentKeyboardState;
         public KeyboardState OldKeyboardState;
 
+        public string Username;
+
+        public BeatMap TestBeatMap;
+
+        private FrameCounter _frameCounter = new FrameCounter();
+
         // Конструктор
         public IgnisGame()
         {
             graphics = new GraphicsDeviceManager(this);
 
             Content.RootDirectory = "Content";
-            IsMouseVisible = false;
+            IsMouseVisible = true;
         }
 
         // Инициализация
@@ -34,14 +43,37 @@ namespace IgnisClaves
             // Фключает фулскрин
             graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width;
             graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height;
-            graphics.IsFullScreen = false;
+            graphics.IsFullScreen = true;
+            graphics.SynchronizeWithVerticalRetrace = false;
             graphics.ApplyChanges();
+
+            IsFixedTimeStep = false;
 
             CurrentKeyboardState = OldKeyboardState = Keyboard.GetState();
 
             IgnisRender.Initialize(this);
 
             CurrentSession = new MenuSession(this, spriteBatch);
+
+            Username = IgnisUtils.GetUsername();
+            TestBeatMap = new BeatMap(100)
+            {
+                Name = "??Hello,< How Are You?",
+                TPS = 5, 
+                Notes = new Dictionary<uint, KeyValuePair<byte, HitSound>[]>()
+            {
+                {
+                    0, new KeyValuePair<byte , HitSound>[]
+                    {new (0, HitSound.HiHat), new (1, HitSound.HiHat)}
+
+                },
+
+                {
+                    10, new KeyValuePair<byte , HitSound>[]
+                    {new (0, HitSound.HiHat), new (2, HitSound.HiHat), new (3, HitSound.HiHat)}
+                }
+            }
+        };
 
             base.Initialize();
         }
@@ -51,6 +83,8 @@ namespace IgnisClaves
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             CurrentSession.SessionSpriteBatch = spriteBatch;
+
+            
 
             // Загрузить карты в меню (или вызвать старт у меню)
             CurrentSession.Start();
@@ -63,7 +97,7 @@ namespace IgnisClaves
             CurrentKeyboardState = Keyboard.GetState();
 
             // Апдейтит текущую сессию
-            CurrentSession.Update();
+            CurrentSession.Update(gameTime);
 
 
             base.Update(gameTime);
@@ -72,24 +106,35 @@ namespace IgnisClaves
         // Отрисовка
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(new Color(87,87,87));
+            GraphicsDevice.Clear(new Color(255, 255, 255));
 
-            spriteBatch.Begin();
+            spriteBatch.Begin(SpriteSortMode.FrontToBack);
 
-            // Отрисовывает текущую сессию
-            CurrentSession.Draw();
+            // Отрисовка текущей сессии
+            CurrentSession.Draw(gameTime);
 
 
-            //// Finds the center of the string in coordinates inside the text rectangle
-            //Vector2 textMiddlePoint = IgnisRender.DefaultFont.MeasureString("MonoGame Font Test") / 2;
-            //// Places text in center of the screen
-            //Vector2 position = new Vector2(Window.ClientBounds.Width / 2f, Window.ClientBounds.Height / 2f);
-            //spriteBatch.DrawString(IgnisRender.DefaultFont, "MonoGame Font Test", new Vector2(0f, 0f),
-            //    Color.White, 0, Vector2.Zero, IgnisRender.GetAbsoluteFontScale(spriteBatch, IgnisRender.DefaultFont, 100f),
-            //    SpriteEffects.None, 0.5f);
+            // Отрисовка FPS
+            {
+                var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+                _frameCounter.Update(deltaTime);
+                var fps = string.Format("FPS: {0}", _frameCounter.AverageFramesPerSecond);
+                Vector2 fpsBox = IgnisRender.GetAbsoluteMeasureString(spriteBatch, IgnisRender.DefaultFont, fps, 0.04f);
 
-            IgnisRender.DrawCenteredText(spriteBatch, IgnisRender.GetUsername(), IgnisRender.GetAbsolutePosition(0.5f,0.5f,spriteBatch), Color.Red, IgnisRender.GetAbsoluteFontScale(spriteBatch, IgnisRender.DefaultFont, 0.1f), 0.5f);
-            //IgnisRender.DrawRectangle(spriteBatch, Color.Red, new Vector2(10f, 10f), new Vector2(50f, 10f));
+                // Фон
+                IgnisRender.DrawRectangle(spriteBatch,
+                    new Color(IgnisRender.DarkGrayColor, 200),
+                    IgnisRender.GetAbsolutePosition(0f, 1f, spriteBatch) - new Vector2(0f, fpsBox.Y), fpsBox,
+                    Vector2.Zero, 0.95f);
+
+                // Текст
+                IgnisRender.DrawText(spriteBatch,
+                    fps,
+                    IgnisRender.GetAbsolutePosition(0f, 1f, spriteBatch) - new Vector2(0f, fpsBox.Y),
+                    IgnisRender.DarkBrownColor,
+                    IgnisRender.GetAbsoluteFontScale(spriteBatch, IgnisRender.DefaultFont, 0.04f),
+                    0.96f);
+            }
 
             spriteBatch.End();
             base.Draw(gameTime);
@@ -99,6 +144,11 @@ namespace IgnisClaves
         public bool IsKeyReleased(Keys key)
         {
             return OldKeyboardState.IsKeyDown(key) && CurrentKeyboardState.IsKeyUp(key);
+        }
+
+        public bool IsKeyPressed(Keys key)
+        {
+            return OldKeyboardState.IsKeyUp(key) && CurrentKeyboardState.IsKeyDown(key);
         }
     }
 }
