@@ -22,36 +22,39 @@ namespace IgnisClaves
         public ushort TPS; // ticks per second
 
         [ProtoMember(4)]
-        public uint Duration { get; private set; }
+        public int Duration { get; private set; }
 
         [ProtoMember(5)]
-        public Dictionary<uint, KeyValuePair<byte, HitSound>[]> Notes;
+        public Dictionary<int, KeyValuePair<Stave.KeysEnum, HitSound>[]> Notes;
 
         [ProtoMember(6)]
         public Song Music;
 
-        public BeatMap(uint duration)
+        public BeatMap(int duration)
         {
             Duration = duration;
             // TODO конструктор сделать (наверное, когда буду делать редактор)
         }
 
-        public BeatMap(string name, uint duration, ushort tps)
+        public BeatMap(string name, int duration, ushort tps)
         {
             Duration = duration;
             Name = name;
             TPS = tps;
-            Notes = new Dictionary<uint, KeyValuePair<byte, HitSound>[]>()
+            Notes = new Dictionary<int, KeyValuePair<Stave.KeysEnum, HitSound>[]>()
             {
                 {
-                    0, new KeyValuePair<byte , HitSound>[]
-                    {new (0, HitSound.HiHat), new (2, HitSound.HiHat)}
+                    0, new KeyValuePair<Stave.KeysEnum, HitSound>[]
+                        { new(0, HitSound.HiHat), new(Stave.KeysEnum.InnerLeft, HitSound.HiHat) }
 
                 },
 
                 {
-                    10, new KeyValuePair<byte , HitSound>[]
-                    {new (0, HitSound.HiHat), new (2, HitSound.HiHat), new (3, HitSound.HiHat)}
+                    10, new KeyValuePair<Stave.KeysEnum, HitSound>[]
+                    {
+                        new(0, HitSound.HiHat), new(Stave.KeysEnum.InnerRight, HitSound.HiHat),
+                        new(Stave.KeysEnum.InnerLeft, HitSound.HiHat)
+                    }
                 }
             };
 
@@ -67,7 +70,7 @@ namespace IgnisClaves
         //    }
         //}
 
-        public KeyValuePair<byte, HitSound>[] GetNotes(uint tick)
+        public KeyValuePair<Stave.KeysEnum, HitSound>[] GetNotes(int tick)
         {
             return Notes.ContainsKey(tick) ? Notes[tick] : null;
         }
@@ -88,6 +91,42 @@ namespace IgnisClaves
             string fileName = IgnisUtils.ConvertFileName($"{Artist} - {Name}");
             IgnisUtils.CreateFolderIfNotExists(folderPath);
             IgnisUtils.SaveToFile(this, folderPath.Replace('/', '\\') + $"\\{fileName}.icbm");
+        }
+
+        public static BeatMap GenerateRandomBeatMap(string name, int duration, ushort tps)
+        {
+            BeatMap result = new BeatMap(duration)
+            {
+                Name = name,
+                TPS = tps
+            };
+
+            Random rand = new Random();
+
+            result.Notes = new Dictionary<int, KeyValuePair<Stave.KeysEnum, HitSound>[]>();
+
+            for (int i = 0; i < duration; i++)
+            {
+                int randInt = rand.Next(12);
+
+                if (randInt == 9)
+                {
+                    KeyValuePair<Stave.KeysEnum, HitSound>[] pairArray = new KeyValuePair<Stave.KeysEnum, HitSound>[4];
+
+                    for (byte j = 0; j < 4; j++)
+                    {
+                        if (rand.Next(4) == 0)
+                        {
+                            pairArray[j] = new KeyValuePair<Stave.KeysEnum, HitSound>((Stave.KeysEnum)j, HitSound.Kick);
+                        }
+                    }
+
+
+                    result.Notes.Add(i, pairArray);
+                }
+            }
+
+            return result;
         }
     }
 }

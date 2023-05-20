@@ -14,7 +14,14 @@ namespace IgnisClaves
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
 
-        public Keys[] Keybinds = new[] { Keys.D, Keys.F, Keys.J, Keys.K }; // TODO подгружать из файла настроек
+        // TODO подгружать из файла настроек
+        public static Dictionary<Stave.KeysEnum, Keys> Keybinds = new()
+        {
+            { Stave.KeysEnum.OuterLeft, Keys.D },
+            { Stave.KeysEnum.InnerLeft, Keys.F },
+            { Stave.KeysEnum.InnerRight, Keys.J },
+            { Stave.KeysEnum.OuterRight, Keys.K },
+        };
 
         #nullable enable
         public Session CurrentSession;
@@ -27,6 +34,14 @@ namespace IgnisClaves
         public BeatMap TestBeatMap;
 
         private FrameCounter _frameCounter = new FrameCounter();
+        public float TargetFps = 60f;
+
+        public static Color OuterKeyDisabledColor = IgnisRender.DarkerGreenColor;
+        public static Color OuterKeyEnabledColor = IgnisRender.GreenColor;
+        public static Color InnerKeyDisabledColor = IgnisRender.DarkerGrayColor;
+        public static Color InnerKeyEnabledColor = IgnisRender.GrayColor;
+        public static Color StaveBackgroundColor = IgnisRender.LightBlackColor;
+        public static Color TextColor = IgnisRender.DarkBrownColor;
 
         // Конструктор
         public IgnisGame()
@@ -43,11 +58,14 @@ namespace IgnisClaves
             // Фключает фулскрин
             graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width;
             graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height;
-            graphics.IsFullScreen = true;
+            graphics.IsFullScreen = false;
             graphics.SynchronizeWithVerticalRetrace = false;
+
+            IsFixedTimeStep = true;  //Force the game to update at fixed time intervals
             graphics.ApplyChanges();
 
-            IsFixedTimeStep = false;
+
+            //IsFixedTimeStep = false;
 
             CurrentKeyboardState = OldKeyboardState = Keyboard.GetState();
 
@@ -59,18 +77,18 @@ namespace IgnisClaves
             TestBeatMap = new BeatMap(100)
             {
                 Name = "??Hello,< How Are You?",
-                TPS = 5, 
-                Notes = new Dictionary<uint, KeyValuePair<byte, HitSound>[]>()
+                TPS = 10, 
+                Notes = new Dictionary<int, KeyValuePair<Stave.KeysEnum, HitSound>[]>()
             {
                 {
-                    0, new KeyValuePair<byte , HitSound>[]
-                    {new (0, HitSound.HiHat), new (1, HitSound.HiHat)}
+                    0, new KeyValuePair<Stave.KeysEnum , HitSound>[]
+                    {new (0, HitSound.HiHat), new (Stave.KeysEnum.InnerLeft, HitSound.HiHat)}
 
                 },
 
                 {
-                    10, new KeyValuePair<byte , HitSound>[]
-                    {new (0, HitSound.HiHat), new (2, HitSound.HiHat), new (3, HitSound.HiHat)}
+                    10, new KeyValuePair<Stave.KeysEnum , HitSound>[]
+                    {new (0, HitSound.HiHat), new (Stave.KeysEnum.InnerRight, HitSound.HiHat), new (Stave.KeysEnum.InnerLeft, HitSound.HiHat)}
                 }
             }
         };
@@ -102,11 +120,11 @@ namespace IgnisClaves
 
             base.Update(gameTime);
         }
-
+        
         // Отрисовка
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(new Color(255, 255, 255));
+            //GraphicsDevice.Clear(new Color(255, 255, 255));
 
             spriteBatch.Begin(SpriteSortMode.FrontToBack);
 
@@ -118,7 +136,8 @@ namespace IgnisClaves
             {
                 var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
                 _frameCounter.Update(deltaTime);
-                var fps = string.Format("FPS: {0}", _frameCounter.AverageFramesPerSecond);
+                //var fps = string.Format("FPS: {0}", _frameCounter.AverageFramesPerSecond);
+                var fps = "FPS: " + _frameCounter.AverageFramesPerSecond.ToString("0.00");
                 Vector2 fpsBox = IgnisRender.GetAbsoluteMeasureString(spriteBatch, IgnisRender.DefaultFont, fps, 0.04f);
 
                 // Фон
@@ -149,6 +168,11 @@ namespace IgnisClaves
         public bool IsKeyPressed(Keys key)
         {
             return OldKeyboardState.IsKeyUp(key) && CurrentKeyboardState.IsKeyDown(key);
+        }
+
+        public void SetTargetFps(float fps)
+        {
+            TargetElapsedTime = TimeSpan.FromSeconds(1 / fps);  
         }
     }
 }

@@ -92,6 +92,8 @@ namespace IgnisClaves
             //}
 
             Username = SessionIgnisGame.Username;
+
+            SessionIgnisGame.SetTargetFps(60f);
         }
 
         public override void Update(GameTime gameTime)
@@ -179,15 +181,20 @@ namespace IgnisClaves
             BeatMapsList.Add(SessionIgnisGame.TestBeatMap);
             BeatMapsList.Add(new BeatMap("Osu mania sucks!", 500, 25));
             BeatMapsList.Add(new BeatMap("Ti kto takoyu", 228, 14));
-            BeatMapsList.Add(new BeatMap("4tobi eto delat", 1337, 88));
-            BeatMapsList.Add(new BeatMap("Nyeh heh heh heh", 666, 15));
-            BeatMapsList.Add(new BeatMap("Osu taiko cool!", 500, 25));
-            BeatMapsList.Add(new BeatMap("Keuda ti zvonishj", 228, 14));
-            BeatMapsList.Add(new BeatMap("Slava Ukraine", 1337, 88));
-            BeatMapsList.Add(new BeatMap("Keys go brrrrr", 666, 1));
-            BeatMapsList.Add(new BeatMap("Popa shavala trusi", 666, 15));
-            BeatMapsList.Add(new BeatMap("Never gonna give you up", 666, 15));
-            BeatMapsList.Add(new BeatMap("Invisible BeatMap", 666, 15));
+
+            for (int i = 0; i < 10; i++)
+            {
+                BeatMapsList.Add(BeatMap.GenerateRandomBeatMap($"Random BeatMap {i}", 500, 100));
+            }
+            //BeatMapsList.Add(new BeatMap("4tobi eto delat", 1337, 88));
+            //BeatMapsList.Add(new BeatMap("Nyeh heh heh heh", 666, 15));
+            //BeatMapsList.Add(new BeatMap("Osu taiko cool!", 500, 25));
+            //BeatMapsList.Add(new BeatMap("Keuda ti zvonishj", 228, 14));
+            //BeatMapsList.Add(new BeatMap("Slava Ukraine", 1337, 88));
+            //BeatMapsList.Add(new BeatMap("Keys go brrrrr", 666, 1));
+            //BeatMapsList.Add(new BeatMap("Popa shavala trusi", 666, 15));
+            //BeatMapsList.Add(new BeatMap("Never gonna give you up", 666, 15));
+            //BeatMapsList.Add(new BeatMap("Invisible BeatMap", 666, 15));
 
             //BeatMapsList.Add(BeatMap.FromFile("Beatmaps\\Keys_go_brrrrr.icbm"));
 

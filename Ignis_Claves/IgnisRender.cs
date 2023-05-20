@@ -22,6 +22,7 @@ namespace IgnisClaves
         public static Color GrayColor = new Color(214, 214, 214);
         public static Color LightBlackColor = new Color(36, 36, 36);
 
+        public static Color DarkerGreenColor = new Color(19, 79, 46);
         public static Color DarkGreenColor = new Color(41, 171, 130);
         public static Color GreenColor = new Color(52, 219, 127);
 

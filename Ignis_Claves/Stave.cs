@@ -12,6 +12,15 @@ namespace IgnisClaves
     public class Stave
     {
         private bool[] keyStates = new bool[4];
+        public static float StaveRelativeHeight = 0.8f;
+
+        public enum KeysEnum
+        {
+            OuterLeft,
+            InnerLeft,
+            InnerRight,
+            OuterRight
+        }
 
         public Stave()
         {
@@ -22,7 +31,7 @@ namespace IgnisClaves
         {
             // Background
             IgnisRender.DrawRectangleByRelative(spriteBatch,
-                IgnisRender.LightBlackColor,
+                IgnisGame.StaveBackgroundColor,
                 new Vector2(relativeX - 2 * relativeLineWidth, 0f),
                 new Vector2(relativeLineWidth * 4, 1f),
                 Vector2.Zero, (int)GameSession.GameDrawOrder.StaveBackground / 100f);
@@ -35,7 +44,7 @@ namespace IgnisClaves
 
                 if (keyStates[i + 2])
                 {
-                    color = i is -1 or 0 ? IgnisRender.GrayColor : IgnisRender.PinkColor;
+                    color = i is -1 or 0 ? IgnisGame.InnerKeyEnabledColor : IgnisGame.OuterKeyEnabledColor;
 
                     // TODO Белые полосы
                     //IgnisRender.DrawRectangleByRelative(spriteBatch,
@@ -45,28 +54,28 @@ namespace IgnisClaves
                 }
                 else
                 {
-                    color = i is -1 or 0 ? IgnisRender.DarkerGrayColor : IgnisRender.DarkPinkColor;
+                    color = i is -1 or 0 ? IgnisGame.InnerKeyDisabledColor : IgnisGame.OuterKeyDisabledColor;
                 }
 
                 // Нижние полосы (Keys)
                 IgnisRender.DrawRectangleByRelative(spriteBatch,
                     color,
-                    new Vector2(relativeX + relativeLineWidth * i, 0.8f),
-                    new Vector2(relativeLineWidth, 0.2f),
+                    new Vector2(relativeX + relativeLineWidth * i, StaveRelativeHeight),
+                    new Vector2(relativeLineWidth, 1f - StaveRelativeHeight),
                     Vector2.Zero, 
                     (int)GameSession.GameDrawOrder.Keys / 100f);
             }
 
         }
 
-        public void UpdateKeyStates(KeyboardState state)
+        public void UpdateKeyStates()
         {
             keyStates = new[]
             {
-                Keyboard.GetState().IsKeyDown(Keys.D),
-                Keyboard.GetState().IsKeyDown(Keys.F),
-                Keyboard.GetState().IsKeyDown(Keys.J),
-                Keyboard.GetState().IsKeyDown(Keys.K)
+                Keyboard.GetState().IsKeyDown(IgnisGame.Keybinds[KeysEnum.OuterLeft]),
+                Keyboard.GetState().IsKeyDown(IgnisGame.Keybinds[KeysEnum.InnerLeft]),
+                Keyboard.GetState().IsKeyDown(IgnisGame.Keybinds[KeysEnum.InnerRight]),
+                Keyboard.GetState().IsKeyDown(IgnisGame.Keybinds[KeysEnum.OuterRight])
             };
         }
     }

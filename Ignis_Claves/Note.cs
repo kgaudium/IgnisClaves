@@ -11,36 +11,22 @@ namespace IgnisClaves
     public class Note
     {
         public HitSound HitSound;
-        private byte line;
+        public Stave.KeysEnum Line;
 
-        public byte Line
-        {
-            get => line;
-            set
-            {
-                if (value < 4)
-                {
-                    line = value;
-                }
-                else
-                {
-                    throw new Exception("Line cannot be greater then 3");
-                }
-            }
-        }
 
         public float PositionY;
 
-        public Note(HitSound hitSound, byte line, SpriteBatch spriteBatch)
+        public Note(HitSound hitSound, Stave.KeysEnum line, SpriteBatch spriteBatch, float posY)
         {
             HitSound = hitSound;
             Line = line;
-            PositionY = -IgnisRender.GetAbsoluteY(0.1f, spriteBatch);
+            //PositionY = -IgnisRender.GetAbsoluteY(0.1f, spriteBatch);
+            PositionY = posY;
         }
 
         public void Draw(SpriteBatch spriteBatch, float relativeX, Vector2 relativeSize)
         {
-            Color color = Line is 1 or 2 ? IgnisRender.GrayColor : IgnisRender.PinkColor;
+            Color color = Line is Stave.KeysEnum.InnerLeft or Stave.KeysEnum.InnerRight ? IgnisGame.InnerKeyEnabledColor : IgnisGame.OuterKeyEnabledColor;
 
             //IgnisRender.DrawRectangleByRelative(spriteBatch,
             //    color,
