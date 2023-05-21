@@ -1,16 +1,11 @@
-﻿using System;
+﻿namespace IgnisClaves;
 
-namespace IgnisClaves
+internal class AppController
 {
-    class AppController
+    public static IgnisGame Ignis = new();
+
+    public static void Main()
     {
-        public static IgnisGame Ignis = new();
-
-        public static void Main()
-        {
-            Ignis.Run();
-        }
-
-
+        Ignis.Run();
     }
 }
