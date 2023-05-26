@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace IgnisClaves;
 
@@ -148,14 +150,24 @@ public class MenuSession : Session
     public void LoadBeatMaps()
     {
         BeatMapsList.Clear();
+        BeatMapsList = BeatMap.LoadBeatMapsFromAppData();
 
         // TODO Загрузить карты из файлов
-        BeatMapsList.Add(SessionIgnisGame.TestBeatMap);
-        BeatMapsList.Add(new BeatMap("Osu mania sucks!", 500, 25));
-        BeatMapsList.Add(new BeatMap("Ti kto takoyu", 228, 14));
+        //BeatMapsList.Add(SessionIgnisGame.TestBeatMap);
+        //BeatMapsList.Add(new BeatMap("Osu mania is sick!", 500, 25));
+        //BeatMapsList.Add(new BeatMap("Ti kto takoyu", 228, 14));
 
-        for (int i = 0; i < 5; i++) BeatMapsList.Add(BeatMap.GenerateRandomBeatMap($"Random BeatMap {i}", 500, 100));
-        for (int i = 1; i < 6; i++) BeatMapsList.Add(BeatMap.GenerateStairsBeatMap($"Stairs BeatMap {i}. Step {i*2}", 500, 100, i*2));
+        ////BeatMap.BeatMapWrapper wrappedBeatMap = new BeatMap.BeatMapWrapper(SessionIgnisGame.TestBeatMap);
+
+        ////BeatMapsList.Add(wrappedBeatMap.ToBeatMap());
+
+        //for (int i = 0; i < 5; i++) BeatMapsList.Add(BeatMap.GenerateRandomBeatMap($"Random BeatMap {i}", 500, 100));
+        //for (int i = 1; i < 6; i++) BeatMapsList.Add(BeatMap.GenerateStairsBeatMap($"Stairs BeatMap {i}. Step {i*2}", 500, 100, i*2));
+
+        //foreach (var beatMap in BeatMapsList)
+        //{
+        //    beatMap.SaveBeatMap();
+        //}
         //BeatMapsList.Add(new BeatMap("4tobi eto delat", 1337, 88));
         //BeatMapsList.Add(new BeatMap("Nyeh heh heh heh", 666, 15));
         //BeatMapsList.Add(new BeatMap("Osu taiko cool!", 500, 25));

@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Principal;
 using System.Text.RegularExpressions;
 using ProtoBuf;
@@ -15,16 +18,23 @@ internal static class IgnisUtils
         return RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? WindowsIdentity.GetCurrent().Name : "default";
     }
 
-    public static void SaveToFile<T>(T data, string filePath)
+    public static void Serialize<T>(T data, string absoluteFilePath)
     {
-        using FileStream fileStream = File.Create(filePath);
-        Serializer.Serialize(fileStream, data);
+        using FileStream fileStream = File.Create(absoluteFilePath);
+        BinaryFormatter formatter = new BinaryFormatter();
+        formatter.Serialize(fileStream, data);
+        fileStream.Close();
+
+        //Serializer.Serialize(fileStream, data);
     }
 
-    public static T LoadFromFile<T>(string filePath)
+    public static T Deserialize<T>(string absoluteFilePath)
     {
-        using FileStream fileStream = File.OpenRead(filePath);
-        return Serializer.Deserialize<T>(fileStream);
+        using FileStream fileStream = File.OpenRead(absoluteFilePath);
+        BinaryFormatter formatter = new BinaryFormatter();
+        return (T)formatter.Deserialize(fileStream);
+
+        //return Serializer.Deserialize<T>(fileStream);
     }
 
     public static string ToBeautyString<T>(this IEnumerable<T> list)
@@ -72,7 +82,7 @@ public class FrameCounter
 {
     public const int MaximumSamples = 100;
 
-    private readonly Queue<float> _sampleBuffer = new();
+    private readonly Queue<float> sampleBuffer = new();
     public long TotalFrames { get; private set; }
     public float TotalSeconds { get; private set; }
     public float AverageFramesPerSecond { get; private set; }
@@ -82,12 +92,12 @@ public class FrameCounter
     {
         CurrentFramesPerSecond = 1.0f / deltaTime;
 
-        _sampleBuffer.Enqueue(CurrentFramesPerSecond);
+        sampleBuffer.Enqueue(CurrentFramesPerSecond);
 
-        if (_sampleBuffer.Count > MaximumSamples)
+        if (sampleBuffer.Count > MaximumSamples)
         {
-            _sampleBuffer.Dequeue();
-            AverageFramesPerSecond = _sampleBuffer.Average(i => i);
+            sampleBuffer.Dequeue();
+            AverageFramesPerSecond = sampleBuffer.Average(i => i);
         }
         else
         {

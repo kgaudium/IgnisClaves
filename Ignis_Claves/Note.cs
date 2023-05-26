@@ -11,7 +11,7 @@ public class Note
 
     public float PositionY;
 
-    public Note(HitSound hitSound, Stave.KeysEnum line, SpriteBatch spriteBatch, float posY)
+    public Note(HitSound hitSound, Stave.KeysEnum line, float posY)
     {
         HitSound = hitSound;
         Line = line;

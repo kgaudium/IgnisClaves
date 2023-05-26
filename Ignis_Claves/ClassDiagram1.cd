@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="IgnisClaves.Note">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAgAAAAAAAAAAAAAAAAAAAAAAAhAAA=</HashCode>
+      <FileName>Note.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IgnisClaves.Session" Collapsed="true">
+    <Position X="1.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAggAAAAAAAAAAAAAAAAAABAAAAAAAAAA=</HashCode>
+      <FileName>Session.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IgnisClaves.Stave">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <NestedTypes>
+      <Enum Name="IgnisClaves.Stave.KeysEnum" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Stave.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAgAAAAAAAAQ=</HashCode>
+      <FileName>Stave.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IgnisClaves.MenuSession" Collapsed="true">
+    <Position X="0.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQggAAAACAIAgAAAQAAgAAAAAAECCAAAAAAAAIAgIA=</HashCode>
+      <FileName>MenuSession.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IgnisClaves.IgnisUtils">
+    <Position X="10.25" Y="4.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AQAQAAAAAAAAAAQAAAAAAAAAACBAAAAACAAAAAAAAAA=</HashCode>
+      <FileName>IgnisUtils.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IgnisClaves.IgnisRender">
+    <Position X="10.25" Y="0.5" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="IgnisClaves.IgnisRender.ScalingMode" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>IgnisRender.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAUAAAogQQBAACIQAAAwAEEAAAQAAQEAgQgALg=</HashCode>
+      <FileName>IgnisRender.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IgnisClaves.IgnisGame">
+    <Position X="8" Y="0.5" Width="2" />
+    <Members>
+      <Field Name="_frameCounter" Hidden="true" />
+      <Field Name="graphics" Hidden="true" />
+      <Field Name="InnerKeyDisabledColor" Hidden="true" />
+      <Field Name="InnerKeyEnabledColor" Hidden="true" />
+      <Field Name="OuterKeyDisabledColor" Hidden="true" />
+      <Field Name="OuterKeyEnabledColor" Hidden="true" />
+      <Field Name="StaveBackgroundColor" Hidden="true" />
+      <Field Name="TargetFps" Hidden="true" />
+      <Field Name="TestBeatMap" Hidden="true" />
+      <Field Name="TextColor" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAQAIEgADAAAgwBIAwAIAAAEAACAAAgAoCAAAAAABAQ=</HashCode>
+      <FileName>IgnisGame.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IgnisClaves.HitSound">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAACAAAAAAAAAAAEAAAEAAAAgAAAIAAAAAA=</HashCode>
+      <FileName>HitSound.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IgnisClaves.GameSession" Collapsed="true">
+    <Position X="2.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IgQBAAAAACAEAwgAAAAgCYAIgAAgAEAQCgAABAAAQIA=</HashCode>
+      <FileName>GameSession.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IgnisClaves.AppController">
+    <Position X="14" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>AppController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IgnisClaves.BeatMap">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <NestedTypes>
+      <Class Name="IgnisClaves.BeatMap.BeatMapWrapper" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>BeatMap.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAhgABAAAACCAAAAAAAAAAQAAIQAAAAECAAAAAAAAAA=</HashCode>
+      <FileName>BeatMap.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

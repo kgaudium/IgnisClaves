@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework.Media;
 using ProtoBuf;
 
@@ -8,15 +11,15 @@ namespace IgnisClaves;
 [ProtoContract]
 public class BeatMap
 {
-    [ProtoMember(1)] public string Artist;
+    public string Artist;
 
-    [ProtoMember(6)] public Song Music;
+    //public Song Music;
 
-    [ProtoMember(2)] public string Name;
+    public string Name;
 
-    [ProtoMember(5)] public Dictionary<int, KeyValuePair<Stave.KeysEnum, HitSound>[]> Notes;
+    public Dictionary<int, KeyValuePair<Stave.KeysEnum, HitSound>[]> Notes;
 
-    [ProtoMember(3)] public ushort TPS; // ticks per second
+    public ushort TPS; // ticks per second
 
     public BeatMap(int duration)
     {
@@ -49,7 +52,7 @@ public class BeatMap
         // Artist = 
     }
 
-    [ProtoMember(4)] public int Duration { get; private set; }
+    public int Duration { get; private init; }
 
     //public IEnumerable<KeyValuePair<byte, HitSound>[]> GetNotes()
     //{
@@ -64,22 +67,48 @@ public class BeatMap
         return Notes.ContainsKey(tick) ? Notes[tick] : null;
     }
 
-    public static BeatMap FromFile(string path)
+    public static BeatMap FromFile(string absolutePath)
     {
-        return IgnisUtils.LoadFromFile<BeatMap>(path);
+        return IgnisUtils.Deserialize<BeatMapWrapper>(absolutePath).ToBeatMap();
     }
 
+    public static List<BeatMap> LoadBeatMapsFromAppData()
+    {
+        var mapList = new List<BeatMap>();
+        string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "IgnisClaves\\Beatmaps");
+
+        IgnisUtils.CreateFolderIfNotExists(path);
+
+        foreach (var file in Directory.GetFiles(path))
+        {
+            if (Path.GetExtension(file) != ".icbm")
+                continue;
+
+            try
+            {
+                mapList.Add(FromFile(file));
+            }
+            catch (Exception e)
+            {
+                throw new Exception($"Invalid .icbm file! {e.Message}");
+            }
+        }
+
+        return mapList;
+    }
 
     // TODO сохранение в файл
     /// <summary>
     ///     Сохраняет карту в указанную папку
     /// </summary>
-    /// <param name="folderPath"></param>
-    public void SaveBeatMap(string folderPath)
+    public void SaveBeatMap()
     {
         string fileName = IgnisUtils.ConvertFileName($"{Artist} - {Name}");
-        IgnisUtils.CreateFolderIfNotExists(folderPath);
-        IgnisUtils.SaveToFile(this, folderPath.Replace('/', '\\') + $"\\{fileName}.icbm");
+        string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "IgnisClaves\\Beatmaps");
+        IgnisUtils.CreateFolderIfNotExists(path);
+        IgnisUtils.Serialize(new BeatMapWrapper(this), Path.Combine(path,$"{fileName}.icbm"));
     }
 
     public static BeatMap GenerateStairsBeatMap(string name, int duration, ushort tps, int step)
@@ -146,5 +175,52 @@ public class BeatMap
         }
 
         return result;
+    }
+
+    [Serializable]
+    internal class BeatMapWrapper
+    {
+        private string Artist { get; }
+
+        private string Name { get; }
+
+        private Dictionary<int, Stave.KeysEnum[]> Notes { get; }
+
+        private ushort TPS { get; }
+
+        private int Duration { get; }
+
+        public BeatMapWrapper(BeatMap map)
+        {
+            Artist = map.Artist;
+            Name = map.Name;
+            TPS = map.TPS;
+            Duration = map.Duration;
+
+            Notes = new Dictionary<int, Stave.KeysEnum[]>();
+            foreach (var pair in map.Notes)
+            {
+                Notes.Add(pair.Key, pair.Value.Select(x => x.Key).ToArray());
+            }
+        }
+
+        public BeatMap ToBeatMap()
+        {
+            BeatMap map = new BeatMap(Duration)
+            {
+                Artist = Artist,
+                Name = Name,
+                TPS = TPS,
+                Duration = Duration,
+                Notes = new Dictionary<int, KeyValuePair<Stave.KeysEnum, HitSound>[]>(),
+            };
+
+            foreach (var pair in Notes)
+            {
+                map.Notes.Add(pair.Key, pair.Value.Select(x => new KeyValuePair<Stave.KeysEnum, HitSound>(x, HitSound.Kick)).ToArray());
+            }
+
+            return map;
+        }
     }
 }

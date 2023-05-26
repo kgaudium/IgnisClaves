@@ -132,7 +132,7 @@ public class GameSession : Session
             if (notes != null)
                 foreach (var note in notes)
                     SpawnedNotes.Add(
-                        new Note(note.Value, note.Key, SessionSpriteBatch, 0f),
+                        new Note(note.Value, note.Key, 0f),
                         CurrentTick + tickShift);
 
             foreach (var pair in SpawnedNotes) pair.Key.PositionY += NoteSpeed;
